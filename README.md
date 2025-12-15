@@ -96,6 +96,10 @@ Experience the clean and modern UI of **Riki Store**:
   <a href="https://wa.me/91">
     <img src="https://img.shields.io/badge/WhatsApp-Chat_Support-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
   </a>
+
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/nitaigrp00a)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20Me-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/nitaisarkar)
+[![Patreon](https://img.shields.io/badge/Patreon-Support%20Me-F96854?logo=patreon&logoColor=white)](https://www.patreon.com/cw/NitaiStudio)
   
   <br><br>
   <p>© 2025 Riki Store. All Rights Reserved.</p>
