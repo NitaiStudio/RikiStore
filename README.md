@@ -11,11 +11,11 @@
 
   <!-- BUTTONS SECTION -->
   <!-- নিচের YOUR_WEBSITE_LINK_HERE এর জায়গায় আপনার ওয়েবসাইটের লিংক দিন -->
-  <a href="YOUR_WEBSITE_LINK_HERE" target="_blank">
+  <a href="https://nitaistudio.github.io/RikiStore/" target="_blank">
     <img src="https://img.shields.io/badge/🌐_Visit-Live_Store-6200ea?style=for-the-badge&logo=google-chrome&logoColor=white" height="50" />
   </a>
   &nbsp;&nbsp;
-  <a href="YOUR_WEBSITE_LINK_HERE" target="_blank">
+  <a href="https://nitaistudio.github.io/RikiStore/" target="_blank">
     <img src="https://img.shields.io/badge/📲_Install-PWA_App-25D366?style=for-the-badge&logo=pwa&logoColor=white" height="50" />
   </a>
 
