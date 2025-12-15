@@ -1,0 +1,21 @@
+{
+  "name": "Riki Store",
+  "short_name": "RikiStore",
+  "start_url": "user.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6200ea",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://i.ibb.co/L8WdYKc/logo-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://i.ibb.co/313v7bC/logo-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

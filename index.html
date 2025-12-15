@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riki Store</title>
+    <meta name="theme-color" content="#6200ea">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #6200ea; --surface: #ffffff; --bg: #f5f5f5; }
+        body { margin: 0; background: var(--bg); font-family: 'Roboto', sans-serif; }
+        .hidden { display: none !important; }
+
+        /* Splash Screen */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f5f5f5; z-index: 1000; display: flex; justify-content: center; align-items: center; flex-direction: column; transition: opacity 0.5s; }
+        .logo { width: 100px; height: 100px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .loader { margin-top: 30px; border: 4px solid #e0e0e0; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Main App */
+        #main-app { padding-bottom: 70px; }
+        .header { background: var(--surface); padding: 15px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center;}
+        .auth-btn { color: var(--primary); font-weight: bold; cursor: pointer; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; max-width: 600px; left: 50%; transform: translateX(-50%); background: var(--surface); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100; }
+        .nav-item { text-align: center; color: #999; font-size: 12px; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s; max-width: 600px; margin: 0 auto;}
+        .page.active { display: block; }
+        .product-card { background: var(--surface); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .p-img { width: 100%; height: 180px; object-fit: cover; }
+        .p-details { padding: 15px; }
+        .btn-buy { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 20px; float: right; cursor: pointer; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 200; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 16px; max-height: 90vh; overflow-y: auto; }
+        .close-btn { float: right; font-size: 24px; cursor: pointer; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .upi-btn { display: block; background: #2e7d32; text-decoration: none; margin-bottom: 15px; }
+        .order-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid #ddd; }
+        .order-card.approved { border-left-color: #2e7d32; }
+        .order-card.rejected { border-left-color: #c62828; }
+        .order-card.pending { border-left-color: #ff9800; }
+        .d-btn { background: #2e7d32; color: white; padding: 5px 15px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px; font-size: 14px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div id="splash-screen">
+    <div class="logo">R</div>
+    <h1 style="color:#333;">Riki Store</h1>
+    <div class="loader"></div>
+</div>
+
+<div id="main-app" class="hidden">
+    <div class="header">
+        <h1 style="margin:0; font-size:20px; color:var(--primary);">Riki Store</h1>
+        <span id="auth-state" class="auth-btn" onclick="openAuthModal()">Login</span>
+    </div>
+
+    <div id="home-page" class="page active">
+        <h3>Latest Products</h3>
+        <div id="products-container">Loading...</div>
+    </div>
+
+    <div id="orders-page" class="page">
+        <h3>My Purchases</h3>
+        <div id="orders-container">Login to see orders.</div>
+    </div>
+
+    <div id="profile-page" class="page">
+        <h3>My Profile</h3>
+        <div id="profile-content"><p>Login to see profile.</p></div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="nav('home', this)">Home</div>
+        <div class="nav-item" onclick="nav('orders', this)">Orders</div>
+        <div class="nav-item" onclick="nav('profile', this)">Profile</div>
+    </div>
+</div>
+
+<!-- All Modals -->
+<div id="productModal" class="modal">
+    <div class="modal-content"><span class="close-btn" onclick="closeModal('productModal')">&times;</span><img id="m_img" src="" style="width:100%; border-radius:8px;"><h2 id="m_title"></h2><p id="m_price" style="color:green;font-weight:bold;"></p><p id="m_desc"></p><div style="margin-top:20px;"><a id="m_demo" href="#" target="_blank" style="display:block;margin-bottom:10px;color:var(--primary);">View Demo</a><button style="float:none;width:100%;" onclick="checkLoginAndBuy()">Buy Now</button></div></div>
+</div>
+
+<div id="buyModal" class="modal">
+    <div class="modal-content"><span class="close-btn" onclick="closeModal('buyModal')">&times;</span><h3>Complete Payment</h3><p>Amount: <b>₹<span id="b_amount"></span></b></p><a id="upi-link" href="#" class="upi-btn">⚡ Pay via UPI App</a><div style="background:#f9f9f9;padding:10px;border-radius:8px;font-size:12px;margin-bottom:15px;"><p style="margin:0;">Or copy: <b>8327888751@amazonpay</b></p></div><hr style="border:0;border-top:1px solid #eee;margin:15px 0;"><h4>Submit Proof</h4><label>Transaction ID / UTR</label><input type="text" id="trx_id" placeholder="Enter Transaction ID"><label>Payment Screenshot</label><input type="file" id="trx_img" accept="image/*"><button id="confirm-btn" style="float:none;width:100%;" onclick="confirmPurchase()">Submit Order</button></div>
+</div>
+
+<div id="authModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('authModal')">&times;</span>
+        <div id="loginView"><h2>Welcome Back</h2><input type="email" id="l_email" placeholder="Email"><input type="password" id="l_password" placeholder="Password"><button onclick="login()">Login</button><p style="cursor:pointer;color:var(--primary);" onclick="toggleAuthView()">New here? Create Account</p></div>
+        <div id="signupView" class="hidden"><h2>Create Account</h2><input type="text" id="s_name" placeholder="Full Name"><input type="email" id="s_email" placeholder="Email"><input type="password" id="s_password" placeholder="Password"><button onclick="signup()">Sign Up</button><p style="cursor:pointer;color:var(--primary);" onclick="toggleAuthView()">Have an account? Login</p></div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+    const firebaseConfig = { apiKey: "AIzaSyCzLZKJoOmLFfGlwxQHx1GifUasxTDV2Uc", authDomain: "rikiapp-71c4a.firebaseapp.com", databaseURL: "https://rikiapp-71c4a-default-rtdb.firebaseio.com", projectId: "rikiapp-71c4a", appId: "1:822715620946:web:f4fdf78f0b0eafdb8a098b" };
+    const IMGBB_API_KEY = "391f65851f9593bedc4225e619cb24e4";
+    const UPI_ID = "8327888751@amazonpay";
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    let currentUser = null, currentProduct = null;
+
+    window.onload = () => {
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+            }, 500);
+        }, 2000);
+    };
+
+    auth.onAuthStateChanged(user => {
+        currentUser = user;
+        if (user) {
+            document.getElementById('auth-state').innerText = "Logout";
+            loadProfile(); loadOrders();
+        } else {
+            document.getElementById('auth-state').innerText = "Login";
+            document.getElementById('orders-container').innerHTML = "<p style='text-align:center;'>Please Login to view orders.</p>";
+            document.getElementById('profile-content').innerHTML = "<p style='text-align:center;'>Please Login to view profile.</p>";
+        }
+        loadProducts();
+    });
+
+    // --- AUTH LOGIC ---
+    function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
+    function toggleAuthView() { document.getElementById('loginView').classList.toggle('hidden'); document.getElementById('signupView').classList.toggle('hidden'); }
+    function signup() {
+        const email = document.getElementById('s_email').value, pass = document.getElementById('s_password').value, name = document.getElementById('s_name').value;
+        if (!name || !email || !pass) return alert("Please fill all fields.");
+        auth.createUserWithEmailAndPassword(email, pass).then(cred => {
+            db.ref('users/' + cred.user.uid).set({ name, email, whatsapp: '', photoUrl: "https://i.ibb.co/5c63G0d/profile-placeholder.png" });
+            closeModal('authModal');
+        }).catch(e => alert(e.message));
+    }
+    function login() {
+        const email = document.getElementById('l_email').value, pass = document.getElementById('l_password').value;
+        auth.signInWithEmailAndPassword(email, pass).then(() => {
+            if (email === "nitai.grp00@gmail.com") window.location.href = "admin.html";
+            else closeModal('authModal');
+        }).catch(e => alert(e.message));
+    }
+
+    // --- APP LOGIC ---
+    function handleAuth() { if (currentUser) auth.signOut(); else openAuthModal(); }
+    function nav(page, element) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById(page + '-page').classList.add('active'); element.classList.add('active'); }
+    function loadProducts() {
+        db.ref('products').on('value', snap => {
+            let html = "";
+            snap.forEach(child => {
+                const p = child.val();
+                if(p.status !== 'Hidden') html += `<div class="product-card" onclick="viewProduct('${child.key}')"><img src="${p.logo}" class="p-img"><div class="p-details"><h3>${p.name}</h3><div><span>₹${p.price}</span><button class="btn-buy">View</button></div></div></div>`;
+            });
+            document.getElementById('products-container').innerHTML = html;
+        });
+    }
+    function viewProduct(key) {
+        db.ref('products/' + key).once('value', snap => {
+            currentProduct = { id: key, ...snap.val() };
+            Object.keys(currentProduct).forEach(k => {
+                const el = document.getElementById(`m_${k === 'logo' ? 'img' : (k === 'name' ? 'title' : k)}`);
+                if (el) el[k === 'logo' ? 'src' : (k === 'demoLink' ? 'href' : 'innerText')] = currentProduct[k];
+            });
+            document.getElementById('productModal').style.display = 'flex';
+        });
+    }
+    function checkLoginAndBuy() { if (!currentUser) openAuthModal(); else { closeModal('productModal'); document.getElementById('b_amount').innerText = currentProduct.price; document.getElementById('upi-link').href = `upi://pay?pa=${UPI_ID}&pn=RikiStore&am=${currentProduct.price}&cu=INR&tn=${currentProduct.name}`; document.getElementById('buyModal').style.display = 'flex'; } }
+    async function confirmPurchase() {
+        const trxId = document.getElementById('trx_id').value, file = document.getElementById('trx_img').files[0], btn = document.getElementById('confirm-btn');
+        if (!trxId || !file) return alert("Enter Trx ID and upload Screenshot.");
+        btn.innerText = "Uploading..."; btn.disabled = true;
+        const formData = new FormData(); formData.append("image", file);
+        try {
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+            const data = await res.json();
+            if (!data.success) throw new Error("Image Upload Failed");
+            db.ref('users/' + currentUser.uid).once('value', snap => {
+                const u = snap.val();
+                db.ref('purchases').push({ uid: currentUser.uid, email: u.email, wa: u.whatsapp || "N/A", userName: u.name, productId: currentProduct.id, productName: currentProduct.name, amount: currentProduct.price, trxId, screenshot: data.data.url, status: 'pending', timestamp: Date.now() }).then(() => {
+                    alert("Order Submitted!"); closeModal('buyModal'); nav('orders', document.querySelector('.nav-item:nth-child(2)'));
+                });
+            });
+        } catch (e) { alert("Error: " + e.message); }
+        finally { btn.innerText = "Submit Order"; btn.disabled = false; }
+    }
+    function loadOrders() {
+        if (!currentUser) return;
+        db.ref('purchases').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
+            let html = "";
+            if (!snap.exists()) html = "<p style='text-align:center'>No purchases.</p>";
+            snap.forEach(child => {
+                const o = child.val();
+                const dlBtn = o.status === 'approved' && o.downloadLink ? `<a href="${o.downloadLink}" target="_blank" class="d-btn">Download</a>` : '';
+                html = `<div class="order-card ${o.status}"><strong>${o.productName}</strong><br><span>₹${o.amount}</span> - <span>${o.status}</span><br><small>Trx ID: ${o.trxId}</small><br>${dlBtn}</div>` + html;
+            });
+            document.getElementById('orders-container').innerHTML = html;
+        });
+    }
+    function loadProfile() {
+        if (!currentUser) return;
+        db.ref('users/' + currentUser.uid).on('value', snap => {
+            const u = snap.val();
+            document.getElementById('profile-content').innerHTML = `<div><img id="profile-img" src="${u.photoUrl || 'https://i.ibb.co/5c63G0d/profile-placeholder.png'}" style="width:100px; height:100px; border-radius:50%; object-fit: cover; display:block; margin:0 auto 20px;"></div><label>Full Name</label><input type="text" id="p_name" value="${u.name}"><label>WhatsApp</label><input type="number" id="p_wa" value="${u.whatsapp || ''}"><label>Update Photo</label><input type="file" id="p_file" accept="image/*"><button style="width:100%;" onclick="updateProfile()">Save</button>`;
+        });
+    }
+    async function updateProfile() {
+        const name = document.getElementById('p_name').value, wa = document.getElementById('p_wa').value, file = document.getElementById('p_file').files[0];
+        let photoUrl = document.getElementById('profile-img').src;
+        const btn = event.target; btn.innerText = "Saving..."; btn.disabled = true;
+        if (file) {
+            const formData = new FormData(); formData.append("image", file);
+            try {
+                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                photoUrl = (await res.json()).data.url;
+            } catch (e) { alert("Image upload failed"); btn.innerText = "Save"; btn.disabled = false; return; }
+        }
+        db.ref('users/' + currentUser.uid).update({ name, whatsapp: wa, photoUrl }).then(() => alert("Profile Updated!"));
+        btn.innerText = "Save"; btn.disabled = false;
+    }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+</script>
+</body>
+</html>
