@@ -1,6 +1,6 @@
 const CACHE_NAME = 'riki-store-v5';
 const urlsToCache = [
-  'index.html', // user.html এর পরিবর্তে index.html
+  'index.html',
   'admin.html',
   'manifest.json'
 ];
