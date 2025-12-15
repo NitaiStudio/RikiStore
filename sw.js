@@ -1,4 +1,4 @@
-const CACHE_NAME = 'riki-store-v5';
+const CACHE_NAME = 'riki-store-final';
 const urlsToCache = [
   'index.html',
   'admin.html',
