@@ -11,11 +11,11 @@
 
   <!-- BUTTONS SECTION -->
   <!-- নিচের YOUR_WEBSITE_LINK_HERE এর জায়গায় আপনার ওয়েবসাইটের লিংক দিন -->
-  <a href="https://nitaistudio.github.io/RikiStore/" target="_blank">
+  <a href="YOUR_WEBSITE_LINK_HERE" target="_blank">
     <img src="https://img.shields.io/badge/🌐_Visit-Live_Store-6200ea?style=for-the-badge&logo=google-chrome&logoColor=white" height="50" />
   </a>
   &nbsp;&nbsp;
-  <a href="https://nitaistudio.github.io/RikiStore/" target="_blank">
+  <a href="YOUR_WEBSITE_LINK_HERE" target="_blank">
     <img src="https://img.shields.io/badge/📲_Install-PWA_App-25D366?style=for-the-badge&logo=pwa&logoColor=white" height="50" />
   </a>
 
@@ -38,16 +38,16 @@ Experience the clean and modern UI of **Riki Store**:
       <td align="center"><b>📄 Product Details</b></td>
     </tr>
     <tr>
-      <td><img src="screenshots/1.jpg" width="280" alt="Home Page"/></td>
-      <td><img src="screenshots/2.jpg" width="280" alt="Details"/></td>
+      <td><img src="1.jpg" width="280" alt="Home Page"/></td>
+      <td><img src="2.jpg" width="280" alt="Details"/></td>
     </tr>
     <tr>
       <td align="center"><b>💳 Secure UPI Payment</b></td>
       <td align="center"><b>👤 Orders & Downloads</b></td>
     </tr>
     <tr>
-      <td><img src="screenshots/3.jpg" width="280" alt="Payment"/></td>
-      <td><img src="screenshots/4.jpg" width="280" alt="Orders"/></td>
+      <td><img src="3.jpg" width="280" alt="Payment"/></td>
+      <td><img src="4.jpg" width="280" alt="Orders"/></td>
     </tr>
   </table>
 </div>
