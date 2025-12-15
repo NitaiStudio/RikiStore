@@ -2,7 +2,7 @@ const CACHE_NAME = 'riki-store-v3';
 
 // যে ফাইলগুলো অফলাইনে দেখানোর জন্য সেভ করা হবে
 const urlsToCache = [
-  'user.html',
+  'index.html',
   'admin.html',
   'manifest.json'
 ];
