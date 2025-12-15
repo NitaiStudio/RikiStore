@@ -63,6 +63,31 @@
         .nav-item { flex: 1; text-align: center; color: #999; font-size: 10px; display: flex; flex-direction: column; justify-content: center; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
         .nav-item span { font-size: 20px; margin-bottom: 2px; }
+
+        /* WhatsApp Floating Button Style */
+        .wa-float {
+            position: fixed;
+            bottom: 80px; /* Above Bottom Nav */
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background-color: #25d366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 999;
+            transition: transform 0.3s ease;
+            animation: bounce 2s infinite;
+        }
+        .wa-float:active { transform: scale(0.9); }
+        .wa-float img { width: 35px; height: 35px; }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-10px);}
+            60% {transform: translateY(-5px);}
+        }
     </style>
 </head>
 <body>
@@ -97,6 +122,11 @@
         <h3 style="margin-top:0;">Profile</h3>
         <div id="profile-content"></div>
     </div>
+
+    <!-- WhatsApp Support Button (Added Here) -->
+    <a href="https://wa.me/919564287717?text=Hi,%20I%20need%20help%20regarding%20Riki%20Store" target="_blank" class="wa-float">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    </a>
 
     <div class="bottom-nav">
         <div class="nav-item active" onclick="nav('home', this)"><span>🏠</span>Home</div>
