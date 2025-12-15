@@ -12,7 +12,7 @@
         #admin-dashboard { display: none; padding: 20px; }
         .header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
-        .tab { padding: 10px 20px; background: white; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; white-space: nowrap; }
+        .tab { padding: 10px 20px; background: white; border-radius: 8px; cursor: pointer; border: 1px solid #ddd; white-space: nowrap; transition: background-color 0.3s; }
         .tab.active { background: #6200ea; color: white; border: none; }
         table { width: 100%; background: white; border-radius: 8px; border-collapse: collapse; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
@@ -101,7 +101,7 @@
             const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
             const data = await res.json();
             db.ref('products').push({ name, price, logo: data.data.url, category: document.getElementById('ap_cat').value, fullDesc: document.getElementById('ap_full').value, demoLink: document.getElementById('ap_demo').value, status: 'Active' }).then(() => {
-                alert("Product Added"); document.getElementById('addProductForm').style.display = 'none';
+                alert("Product Added"); document.getElementById('addProductForm').reset(); document.getElementById('addProductForm').style.display = 'none';
             });
         } catch(e) { alert("Upload Error"); }
         finally { btn.innerText = "Publish"; btn.disabled = false; }
@@ -121,9 +121,9 @@
             let html = "";
             snap.forEach(child => {
                 const o = child.val(); let actions = '';
-                if (o.status === 'pending') actions = `<button class="btn-green" onclick="approveOrder('${child.key}')">Approve</button><button class="btn-red" onclick="rejectOrder('${child.key}')">Reject</button>`;
+                if (o.status === 'pending') actions = `<button class="btn-green" onclick="approveOrder('${child.key}')">Approve</button><br><button class="btn-red" style="margin-top:5px;" onclick="rejectOrder('${child.key}')">Reject</button>`;
                 else actions = 'Done';
-                html = `<tr><td>${o.userName}<br><small>${o.email}</small></td><td>${o.productName}<br><small>₹${o.amount}</small></td><td><small>ID: ${o.trxId}</small><br><a href="${o.screenshot}" target="_blank">View Proof</a></td><td><span class="status-badge bg-${o.status}">${o.status}</span></td><td>${actions}</td></tr>` + html;
+                html = `<tr><td>${o.userName}<br><small>${o.email}</small></td><td>${o.productName}<br><small>₹${o.amount}</small></td><td><small>ID: ${o.trxId}</small><br><a href="${o.screenshot}" target="_blank" style="color:blue;">View Proof</a></td><td><span class="status-badge bg-${o.status}">${o.status}</span></td><td>${actions}</td></tr>` + html;
             });
             document.querySelector('#orders-table tbody').innerHTML = html;
         });
