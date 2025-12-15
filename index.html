@@ -108,14 +108,16 @@
     auth.onAuthStateChanged(user => {
         currentUser = user;
         if (user) {
+            // User is logged in
             document.getElementById('auth-state').innerText = "Logout";
             loadProfile(); loadOrders();
         } else {
+            // User is a GUEST (not logged in)
             document.getElementById('auth-state').innerText = "Login";
             document.getElementById('orders-container').innerHTML = `<p style="text-align:center;">Please Login to view your orders.</p>`;
             document.getElementById('profile-content').innerHTML = `<p style="text-align:center;">Please Login to view your profile.</p>`;
         }
-        loadProducts();
+        loadProducts(); // Load products for everyone
     });
 
     // --- AUTH LOGIC ---
@@ -161,7 +163,17 @@
             document.getElementById('productModal').style.display = 'flex';
         });
     }
-    function checkLoginAndBuy() { if (!currentUser) { closeModal('productModal'); openAuthModal(); } else { closeModal('productModal'); document.getElementById('b_amount').innerText = currentProduct.price; document.getElementById('upi-link').href = `upi://pay?pa=${UPI_ID}&pn=RikiStore&am=${currentProduct.price}&cu=INR&tn=${currentProduct.name}`; document.getElementById('buyModal').style.display = 'flex'; } }
+    function checkLoginAndBuy() {
+        if (!currentUser) { // If user is a GUEST, open login modal
+            closeModal('productModal');
+            openAuthModal();
+        } else { // If user is logged in, proceed to payment
+            closeModal('productModal');
+            document.getElementById('b_amount').innerText = currentProduct.price;
+            document.getElementById('upi-link').href = `upi://pay?pa=${UPI_ID}&pn=RikiStore&am=${currentProduct.price}&cu=INR&tn=${currentProduct.name}`;
+            document.getElementById('buyModal').style.display = 'flex';
+        }
+    }
     async function confirmPurchase() {
         const trxId = document.getElementById('trx_id').value, file = document.getElementById('trx_img').files[0], btn = document.getElementById('confirm-btn');
         if (!trxId || !file) return alert("Enter Trx ID and upload Screenshot.");
