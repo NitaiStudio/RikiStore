@@ -93,7 +93,7 @@ Experience the clean and modern UI of **Riki Store**:
   <h3>📬 Contact & Support</h3>
   <p>Need help with a purchase? Chat with us directly!</p>
   
-  <a href="https://wa.me/919564287717">
+  <a href="https://wa.me/91">
     <img src="https://img.shields.io/badge/WhatsApp-Chat_Support-25D366?style=for-the-badge&logo=whatsapp&logoColor=white" />
   </a>
   
