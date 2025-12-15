@@ -10,125 +10,94 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary: #6200ea; --surface: #ffffff; --bg: #f5f5f5; }
-        * { box-sizing: border-box; }
-        body { margin: 0; background: var(--bg); font-family: 'Roboto', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: var(--bg); font-family: 'Roboto', sans-serif; }
         .hidden { display: none !important; }
 
-        /* Splash Screen */
-        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--surface); z-index: 2000; display: flex; justify-content: center; align-items: center; flex-direction: column; transition: opacity 0.5s ease-out; }
-        .logo { width: 100px; height: 100px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; box-shadow: 0 4px 15px rgba(98, 0, 234, 0.4); }
-        .loader { margin-top: 30px; border: 4px solid #e0e0e0; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        /* Splash */
+        #splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--surface); z-index: 2000; display: flex; justify-content: center; align-items: center; flex-direction: column; transition: opacity 0.5s; }
+        .logo { width: 100px; height: 100px; background: var(--primary); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: bold; box-shadow: 0 4px 15px rgba(98,0,234,0.4); }
 
         /* Header */
-        .header { background: var(--surface); padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; height: 60px; }
-        .app-title { font-size: 20px; font-weight: bold; color: var(--primary); margin: 0; }
-        .header-icons { display: flex; gap: 15px; align-items: center; }
-        .icon-btn { font-size: 20px; cursor: pointer; color: #555; background: none; border: none; padding: 0; }
-        
-        /* Auth Button */
-        .auth-btn { background: var(--primary); color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; }
+        .header { background: var(--surface); padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .auth-btn { background: var(--primary); color: white; padding: 6px 14px; border-radius: 20px; font-size: 14px; border: none; font-weight: bold; }
+        #install-btn { display: none; background: #333; color: white; padding: 6px 12px; border-radius: 5px; font-size: 12px; border: none; margin-right: 10px; }
 
-        /* Install PWA Button (Hidden by default) */
-        #install-btn { display: none; background: #333; color: white; padding: 6px 12px; border-radius: 5px; font-size: 12px; font-weight: bold; }
-
-        /* Main Content */
+        /* Content */
         #main-app { padding-bottom: 70px; }
         .page { display: none; padding: 15px; animation: fadeIn 0.3s; }
         .page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Product List Card */
-        .product-card { background: var(--surface); border-radius: 12px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
+        /* Product Card */
+        .product-card { background: var(--surface); border-radius: 12px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .p-img-container { width: 100%; height: 180px; background: #eee; }
         .p-img { width: 100%; height: 100%; object-fit: cover; }
         .p-details { padding: 12px; }
-        .p-title { margin: 0 0 5px; font-size: 16px; font-weight: 500; color: #333; }
         .p-row { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-        .p-price { color: #2e7d32; font-weight: bold; font-size: 16px; }
         .btn-view { background: #ede7f6; color: var(--primary); border: none; padding: 6px 15px; border-radius: 15px; font-weight: bold; font-size: 12px; }
 
-        /* Full Screen Product Modal (Android Style) */
-        .fs-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1500; display: none; flex-direction: column; animation: slideUp 0.3s ease-out; }
+        /* Full Screen Modal */
+        .fs-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1500; display: none; flex-direction: column; animation: slideUp 0.3s; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .fs-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 15px; background: white; }
-        .back-btn { font-size: 24px; cursor: pointer; background: none; border: none; padding: 0; }
-        
-        .fs-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; } /* Space for bottom bar */
-        
-        .fs-img { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; background: #eee; margin-bottom: 15px; }
-        .fs-title { font-size: 22px; margin: 0 0 10px; color: #333; }
-        .fs-price { font-size: 24px; color: #2e7d32; font-weight: bold; margin-bottom: 15px; }
-        .fs-desc { font-size: 14px; color: #666; line-height: 1.6; white-space: pre-wrap; }
-        
-        .fs-bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 10px 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 10px; }
-        .btn-demo { flex: 1; padding: 12px; border: 1px solid var(--primary); color: var(--primary); background: white; border-radius: 8px; font-weight: bold; text-align: center; text-decoration: none; }
-        .btn-buy-now { flex: 2; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+        .fs-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; gap: 15px; align-items: center; }
+        .fs-content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
+        .fs-bottom { position: fixed; bottom: 0; left: 0; width: 100%; background: white; padding: 10px 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); display: flex; gap: 10px; }
+        .btn-buy-now { flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
 
-        /* Other Modals (Center) */
+        /* Center Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { background: white; width: 90%; max-width: 350px; padding: 20px; border-radius: 16px; position: relative; }
-        .close-icon { position: absolute; top: 10px; right: 15px; font-size: 20px; cursor: pointer; color: #999; }
-        
-        /* Forms */
-        input { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
-        .btn-full { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        
-        /* Bottom Nav */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100; height: 60px; }
-        .nav-item { text-align: center; color: #999; font-size: 10px; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .nav-item span { font-size: 20px; margin-bottom: 2px; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .close-icon { position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; }
+        input { width: 100%; padding: 12px; margin: 8px 0 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-full { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; }
 
         /* Orders */
         .order-card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .order-card.approved { border-left-color: #2e7d32; }
         .order-card.rejected { border-left-color: #c62828; }
-        .order-card.pending { border-left-color: #ff9800; }
-        .d-btn { display: inline-block; background: #2e7d32; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; margin-top: 10px; font-size: 12px; }
+        .d-btn { display: block; text-align: center; background: #2e7d32; color: white; padding: 10px; text-decoration: none; border-radius: 8px; margin-top: 10px; font-weight: bold; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--surface); display: flex; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 100; height: 60px; }
+        .nav-item { flex: 1; text-align: center; color: #999; font-size: 10px; display: flex; flex-direction: column; justify-content: center; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item span { font-size: 20px; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-<!-- Splash Screen -->
 <div id="splash-screen">
     <div class="logo">R</div>
-    <h1 style="color:#333; margin-top:15px;">Riki Store</h1>
-    <div class="loader"></div>
+    <h1 style="color:#333; margin-top:10px;">Riki Store</h1>
 </div>
 
 <div id="main-app" class="hidden">
-    <!-- Header -->
     <div class="header">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <div class="logo" style="width:30px; height:30px; font-size:16px; border-radius:8px;">R</div>
-            <h1 class="app-title">Riki Store</h1>
-        </div>
-        <div class="header-icons">
+        <h1 style="margin:0; font-size:20px; color:var(--primary);">Riki Store</h1>
+        <div style="display:flex; align-items:center;">
             <button id="install-btn" onclick="installApp()">Install App</button>
             <button id="auth-btn" class="auth-btn" onclick="handleAuth()">Login</button>
         </div>
     </div>
 
-    <!-- Pages -->
+    <!-- Home Page -->
     <div id="home-page" class="page active">
-        <div id="products-container">
-            <p style="text-align:center; color:#666;">Loading products...</p>
-        </div>
+        <div id="products-container"><p style="text-align:center;">Loading...</p></div>
     </div>
 
+    <!-- Orders Page -->
     <div id="orders-page" class="page">
         <h3 style="margin-top:0;">My Purchases</h3>
         <div id="orders-container"></div>
     </div>
 
+    <!-- Profile Page -->
     <div id="profile-page" class="page">
         <h3 style="margin-top:0;">Profile</h3>
         <div id="profile-content"></div>
     </div>
 
-    <!-- Bottom Nav -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="nav('home', this)"><span>🏠</span>Home</div>
         <div class="nav-item" onclick="nav('orders', this)"><span>🛍️</span>Orders</div>
@@ -136,404 +105,179 @@
     </div>
 </div>
 
-<!-- 1. Full Screen Product Modal (FIXED SCROLLING & BUY BUTTON) -->
+<!-- Product Details Modal -->
 <div id="productModal" class="fs-modal">
-    <div class="fs-header">
-        <button class="back-btn" onclick="closeFsModal()">←</button>
-        <span style="font-weight:bold; font-size:18px;">Product Details</span>
-    </div>
+    <div class="fs-header"><span onclick="closeFsModal()" style="font-size:24px; cursor:pointer;">←</span> <b>Details</b></div>
     <div class="fs-content">
-        <img id="m_img" class="fs-img" src="" alt="Product Image">
-        <h2 id="m_title" class="fs-title"></h2>
-        <div id="m_price" class="fs-price"></div>
-        <div style="background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:15px;">
-            <strong>Description:</strong>
-            <p id="m_desc" class="fs-desc"></p>
-        </div>
+        <img id="m_img" style="width:100%; height:250px; object-fit:cover; border-radius:10px; background:#eee;">
+        <h2 id="m_title" style="margin:10px 0;"></h2>
+        <h3 id="m_price" style="color:#2e7d32; margin:0 0 15px;"></h3>
+        <div style="background:#f9f9f9; padding:10px; border-radius:8px;"><p id="m_desc" style="white-space:pre-wrap; margin:0; font-size:14px; color:#555;"></p></div>
     </div>
-    <div class="fs-bottom-bar">
-        <a id="m_demo" href="#" target="_blank" class="btn-demo">Live Demo</a>
+    <div class="fs-bottom">
+        <a id="m_demo" href="#" target="_blank" style="flex:1; text-align:center; padding:12px; border:1px solid #6200ea; color:#6200ea; border-radius:8px; text-decoration:none; font-weight:bold;">Demo</a>
         <button class="btn-buy-now" onclick="checkLoginAndBuy()">Buy Now</button>
     </div>
 </div>
 
-<!-- 2. Buy/Payment Modal -->
+<!-- Buy Modal -->
 <div id="buyModal" class="modal">
     <div class="modal-content">
         <span class="close-icon" onclick="closeModal('buyModal')">&times;</span>
-        <h3 style="margin-top:0;">Complete Payment</h3>
-        <p>Pay: <b>₹<span id="b_amount"></span></b></p>
-        
-        <a id="upi-link" href="#" class="btn-full" style="display:block; text-align:center; text-decoration:none; background:#2e7d32; margin-bottom:15px;">⚡ Pay via UPI App</a>
-        
-        <div style="text-align:center; font-size:12px; color:#666; margin-bottom:15px; background:#f0f0f0; padding:8px; border-radius:5px;">
-            Or send to: <b>8327888751@amazonpay</b>
-        </div>
-        
-        <label style="font-size:12px; font-weight:bold;">Transaction ID (Required)</label>
-        <input type="text" id="trx_id" placeholder="Ex: 1234567890">
-        
-        <label style="font-size:12px; font-weight:bold;">Screenshot</label>
+        <h3>Payment</h3>
+        <p>Amount: <b>₹<span id="b_amount"></span></b></p>
+        <a id="upi-link" href="#" class="btn-full" style="display:block; text-align:center; text-decoration:none; background:#2e7d32; margin-bottom:10px;">Pay via UPI</a>
+        <p style="font-size:12px; text-align:center; background:#eee; padding:5px;">ID: <b>8327888751@amazonpay</b></p>
+        <input type="text" id="trx_id" placeholder="Transaction ID">
         <input type="file" id="trx_img" accept="image/*">
-        
         <button id="confirm-btn" class="btn-full" onclick="confirmPurchase()">Submit Order</button>
     </div>
 </div>
 
-<!-- 3. Auth Modal -->
+<!-- Auth Modal -->
 <div id="authModal" class="modal">
     <div class="modal-content">
         <span class="close-icon" onclick="closeModal('authModal')">&times;</span>
-        <!-- Login View -->
         <div id="loginView">
-            <h2 style="text-align:center; margin-top:0;">Login</h2>
+            <h2 style="text-align:center;">Login</h2>
             <input type="email" id="l_email" placeholder="Email">
             <input type="password" id="l_password" placeholder="Password">
             <button class="btn-full" onclick="login()">Login</button>
-            <p style="text-align:center; color:var(--primary); cursor:pointer; margin-bottom:0;" onclick="toggleAuthView()">Create Account</p>
+            <p style="text-align:center; color:#6200ea; cursor:pointer;" onclick="toggleAuthView()">Create Account</p>
         </div>
-        <!-- Signup View -->
         <div id="signupView" class="hidden">
-            <h2 style="text-align:center; margin-top:0;">Sign Up</h2>
-            <input type="text" id="s_name" placeholder="Full Name">
+            <h2 style="text-align:center;">Sign Up</h2>
+            <input type="text" id="s_name" placeholder="Name">
             <input type="email" id="s_email" placeholder="Email">
             <input type="password" id="s_password" placeholder="Password">
             <button class="btn-full" onclick="signup()">Sign Up</button>
-            <p style="text-align:center; color:var(--primary); cursor:pointer; margin-bottom:0;" onclick="toggleAuthView()">Back to Login</p>
+            <p style="text-align:center; color:#6200ea; cursor:pointer;" onclick="toggleAuthView()">Back to Login</p>
         </div>
     </div>
 </div>
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
 <script>
-    // --- CONFIGURATION ---
     const firebaseConfig = { apiKey: "AIzaSyCzLZKJoOmLFfGlwxQHx1GifUasxTDV2Uc", authDomain: "rikiapp-71c4a.firebaseapp.com", databaseURL: "https://rikiapp-71c4a-default-rtdb.firebaseio.com", projectId: "rikiapp-71c4a", appId: "1:822715620946:web:f4fdf78f0b0eafdb8a098b" };
     const IMGBB_API_KEY = "391f65851f9593bedc4225e619cb24e4";
     const UPI_ID = "8327888751@amazonpay";
 
-    // --- INITIALIZATION ---
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.database();
-    let currentUser = null;
-    let currentProduct = null;
-    let deferredPrompt;
+    let currentUser = null, currentProduct = null, deferredPrompt;
 
     window.onload = () => {
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(reg => console.log('SW Registered')).catch(err => console.log('SW Error', err));
-        }
-
-        // PWA Install Prompt Capture
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('install-btn').style.display = 'block';
-        });
-
-        // Hide Splash Screen
-        setTimeout(() => {
-            document.getElementById('splash-screen').style.opacity = '0';
-            setTimeout(() => { 
-                document.getElementById('splash-screen').classList.add('hidden'); 
-                document.getElementById('main-app').classList.remove('hidden'); 
-            }, 500);
-        }, 2000);
+        if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; document.getElementById('install-btn').style.display = 'block'; });
+        setTimeout(() => { document.getElementById('splash-screen').style.display = 'none'; document.getElementById('main-app').classList.remove('hidden'); }, 2000);
     };
 
-    // Install App Function
     function installApp() {
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    document.getElementById('install-btn').style.display = 'none';
-                }
-                deferredPrompt = null;
-            });
-        }
+        if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then((r) => { if(r.outcome === 'accepted') document.getElementById('install-btn').style.display = 'none'; deferredPrompt = null; }); }
     }
 
-    // --- AUTH STATE LISTENER ---
     auth.onAuthStateChanged(user => {
         currentUser = user;
-        const authBtn = document.getElementById('auth-btn');
-        if (user) {
-            // LOGGED IN
-            authBtn.innerText = "Logout";
-            loadProfile(); 
+        if(user) {
+            document.getElementById('auth-btn').innerText = "Logout";
             loadOrders();
+            loadProfile();
         } else {
-            // GUEST
-            authBtn.innerText = "Login";
-            document.getElementById('orders-container').innerHTML = `<div style="text-align:center; padding:20px; color:#666;">Please Login to view your orders.</div>`;
-            document.getElementById('profile-content').innerHTML = `<div style="text-align:center; padding:20px; color:#666;">Please Login to view your profile.</div>`;
+            document.getElementById('auth-btn').innerText = "Login";
+            document.getElementById('orders-container').innerHTML = "<p style='text-align:center; margin-top:20px;'>Please Login to view orders.</p>";
+            document.getElementById('profile-content').innerHTML = "<p style='text-align:center; margin-top:20px;'>Please Login.</p>";
         }
-        loadProducts(); // Always load products
+        loadProducts();
     });
 
-    // --- CORE FUNCTIONS ---
-
-    // 1. Navigation
-    function nav(pageId, el) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(pageId + '-page').classList.add('active');
-        el.classList.add('active');
-    }
-
-    // 2. Auth Actions
-    function handleAuth() {
-        if (currentUser) {
-            if(confirm("Are you sure you want to logout?")) auth.signOut();
-        } else {
-            document.getElementById('authModal').style.display = 'flex';
-        }
-    }
-    
-    function toggleAuthView() {
-        document.getElementById('loginView').classList.toggle('hidden');
-        document.getElementById('signupView').classList.toggle('hidden');
-    }
-
-    function login() {
-        const email = document.getElementById('l_email').value;
-        const pass = document.getElementById('l_password').value;
-        if(!email || !pass) return alert("Fill all fields");
-        
-        auth.signInWithEmailAndPassword(email, pass).then(() => {
-            if (email === "nitai.grp00@gmail.com") window.location.href = "admin.html";
-            else closeModal('authModal');
-        }).catch(e => alert(e.message));
-    }
-
-    function signup() {
-        const name = document.getElementById('s_name').value;
-        const email = document.getElementById('s_email').value;
-        const pass = document.getElementById('s_password').value;
-        if(!name || !email || !pass) return alert("Fill all fields");
-
-        auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-            db.ref('users/' + cred.user.uid).set({
-                name: name, email: email, photoUrl: "https://i.ibb.co/5c63G0d/profile-placeholder.png", whatsapp: ""
-            });
-            closeModal('authModal');
-        }).catch(e => alert(e.message));
-    }
-
-    // 3. Products Logic
     function loadProducts() {
         db.ref('products').on('value', snap => {
-            const container = document.getElementById('products-container');
-            container.innerHTML = "";
-            snap.forEach(child => {
-                const p = child.val();
+            const div = document.getElementById('products-container');
+            div.innerHTML = "";
+            snap.forEach(c => {
+                const p = c.val();
                 if(p.status === 'Active') {
-                    container.innerHTML += `
-                        <div class="product-card" onclick="openProduct('${child.key}')">
-                            <div class="p-img-container">
-                                <img src="${p.logo}" class="p-img" loading="lazy">
-                            </div>
-                            <div class="p-details">
-                                <h3 class="p-title">${p.name}</h3>
-                                <div class="p-row">
-                                    <span class="p-price">₹${p.price}</span>
-                                    <button class="btn-view">View</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    div.innerHTML += `<div class="product-card" onclick="openP('${c.key}')"><div class="p-img-container"><img src="${p.logo}" class="p-img"></div><div class="p-details"><h3>${p.name}</h3><div class="p-row"><span style="color:#2e7d32; font-weight:bold;">₹${p.price}</span><button class="btn-view">View</button></div></div></div>`;
                 }
             });
         });
     }
 
-    // 4. Product Modal Logic (The Fix)
-    function openProduct(key) {
-        db.ref('products/' + key).once('value', snap => {
-            currentProduct = { id: key, ...snap.val() };
+    function openP(k) {
+        db.ref('products/'+k).once('value', s => {
+            currentProduct = { id: k, ...s.val() };
             document.getElementById('m_img').src = currentProduct.logo;
             document.getElementById('m_title').innerText = currentProduct.name;
-            document.getElementById('m_price').innerText = "₹" + currentProduct.price;
+            document.getElementById('m_price').innerText = "₹"+currentProduct.price;
             document.getElementById('m_desc').innerText = currentProduct.fullDesc;
             document.getElementById('m_demo').href = currentProduct.demoLink;
-            document.getElementById('productModal').style.display = 'flex'; // Show Full Screen
+            document.getElementById('productModal').style.display = 'flex';
         });
     }
 
-    function closeFsModal() {
-        document.getElementById('productModal').style.display = 'none';
-    }
-
-    function checkLoginAndBuy() {
-        if (!currentUser) {
-            closeFsModal(); // Close product first
-            document.getElementById('authModal').style.display = 'flex';
-        } else {
-            // Open Payment Modal
-            document.getElementById('b_amount').innerText = currentProduct.price;
-            document.getElementById('upi-link').href = `upi://pay?pa=${UPI_ID}&pn=RikiStore&am=${currentProduct.price}&cu=INR&tn=Order-${currentProduct.name}`;
-            document.getElementById('buyModal').style.display = 'flex';
-        }
-    }
-
-    // 5. Purchase Logic
-    async function confirmPurchase() {
-        const trxId = document.getElementById('trx_id').value;
-        const file = document.getElementById('trx_img').files[0];
-        const btn = document.getElementById('confirm-btn');
-
-        if(!trxId || !file) return alert("Please provide Trx ID and Screenshot");
-        
-        btn.innerText = "Uploading...";
-        btn.disabled = true;
-
-        const formData = new FormData();
-        formData.append("image", file);
-
-        try {
-            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-            const data = await res.json();
-            if(!data.success) throw new Error("Image Upload Failed");
-            
-            // Get user data
-            const userSnap = await db.ref('users/' + currentUser.uid).once('value');
-            const uData = userSnap.val();
-
-            // Push order
-            await db.ref('purchases').push({
-                uid: currentUser.uid,
-                email: currentUser.email,
-                userName: uData.name || "User",
-                wa: uData.whatsapp || "N/A",
-                productId: currentProduct.id,
-                productName: currentProduct.name,
-                amount: currentProduct.price,
-                trxId: trxId,
-                screenshot: data.data.url,
-                status: 'pending',
-                timestamp: Date.now()
-            });
-
-            alert("Order Submitted Successfully!");
-            closeModal('buyModal');
-            closeFsModal();
-            nav('orders', document.querySelectorAll('.nav-item')[1]);
-
-        } catch(e) {
-            alert("Error: " + e.message);
-        } finally {
-            btn.innerText = "Submit Order";
-            btn.disabled = false;
-        }
-    }
-
-    // 6. Orders Logic
     function loadOrders() {
+        // Orders loading logic fixed to work with new rules
         if(!currentUser) return;
         db.ref('purchases').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
-            const container = document.getElementById('orders-container');
-            container.innerHTML = "";
-            if(!snap.exists()) {
-                container.innerHTML = "<p style='text-align:center; margin-top:20px;'>No orders found.</p>";
-                return;
-            }
+            const div = document.getElementById('orders-container');
+            div.innerHTML = "";
+            if(!snap.exists()) { div.innerHTML = "<p style='text-align:center; margin-top:20px;'>No purchases found.</p>"; return; }
             
-            // Convert object to array and reverse (newest first)
-            const orders = [];
-            snap.forEach(c => orders.push(c.val()));
-            orders.reverse();
+            const list = [];
+            snap.forEach(c => list.push(c.val()));
+            list.reverse(); // Show newest first
 
-            orders.forEach(o => {
-                let dlHtml = "";
+            list.forEach(o => {
+                let btn = "";
+                // Logic ensures download button ONLY appears if approved AND link exists
                 if(o.status === 'approved' && o.downloadLink) {
-                    dlHtml = `<a href="${o.downloadLink}" target="_blank" class="d-btn">Download File</a>`;
+                    btn = `<a href="${o.downloadLink}" target="_blank" class="d-btn">Download File</a>`;
                 }
-                
-                container.innerHTML += `
-                    <div class="order-card ${o.status}">
-                        <div style="display:flex; justify-content:space-between;">
-                            <strong>${o.productName}</strong>
-                            <span style="font-weight:bold;">₹${o.amount}</span>
-                        </div>
-                        <div style="margin-top:5px; font-size:12px; color:#666;">
-                            Status: <span style="text-transform:uppercase; font-weight:bold; color:${getColor(o.status)}">${o.status}</span><br>
-                            Trx: ${o.trxId}
-                        </div>
-                        ${dlHtml}
-                    </div>
-                `;
+                div.innerHTML += `<div class="order-card ${o.status}"><strong>${o.productName}</strong><br>₹${o.amount} - <span style="text-transform:capitalize; font-weight:bold;">${o.status}</span><br><small>Trx: ${o.trxId}</small>${btn}</div>`;
             });
         });
     }
 
-    function getColor(status) {
-        if(status === 'approved') return '#2e7d32';
-        if(status === 'rejected') return '#c62828';
-        return '#ff9800';
+    function confirmPurchase() {
+        const trx = document.getElementById('trx_id').value;
+        const file = document.getElementById('trx_img').files[0];
+        const btn = document.getElementById('confirm-btn');
+        if(!trx || !file) return alert("Missing details");
+        
+        btn.innerText = "Processing..."; btn.disabled = true;
+        const fd = new FormData(); fd.append("image", file);
+        
+        fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {method:'POST', body:fd})
+        .then(r => r.json())
+        .then(d => {
+            db.ref('users/'+currentUser.uid).once('value', s => {
+                const u = s.val();
+                db.ref('purchases').push({
+                    uid: currentUser.uid, email: currentUser.email, userName: u.name, wa: u.whatsapp,
+                    productId: currentProduct.id, productName: currentProduct.name, amount: currentProduct.price,
+                    trxId: trx, screenshot: d.data.url, status: 'pending', timestamp: Date.now()
+                }).then(() => {
+                    alert("Order Placed!"); closeModal('buyModal'); document.getElementById('productModal').style.display='none';
+                    nav('orders', document.querySelectorAll('.nav-item')[1]);
+                });
+            });
+        }).catch(()=>alert("Upload Failed")).finally(() => { btn.innerText="Submit Order"; btn.disabled=false; });
     }
 
-    // 7. Profile Logic
-    function loadProfile() {
-        if(!currentUser) return;
-        db.ref('users/' + currentUser.uid).on('value', snap => {
-            const u = snap.val();
-            document.getElementById('profile-content').innerHTML = `
-                <div style="text-align:center; margin-bottom:20px;">
-                    <img id="p_img_preview" src="${u.photoUrl}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #6200ea;">
-                </div>
-                <label style="font-size:12px; font-weight:bold;">Name</label>
-                <input type="text" id="p_name" value="${u.name}">
-                <label style="font-size:12px; font-weight:bold;">WhatsApp</label>
-                <input type="number" id="p_wa" value="${u.whatsapp || ''}">
-                <label style="font-size:12px; font-weight:bold;">Update Photo</label>
-                <input type="file" id="p_file" accept="image/*">
-                <button class="btn-full" onclick="updateProfile()">Save Changes</button>
-            `;
-        });
-    }
-
-    async function updateProfile() {
-        const name = document.getElementById('p_name').value;
-        const wa = document.getElementById('p_wa').value;
-        const file = document.getElementById('p_file').files[0];
-        let photoUrl = document.getElementById('p_img_preview').src;
-
-        const btn = event.target;
-        btn.innerText = "Saving...";
-        btn.disabled = true;
-
-        if(file) {
-            const formData = new FormData();
-            formData.append("image", file);
-            try {
-                const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
-                photoUrl = (await res.json()).data.url;
-            } catch(e) {
-                alert("Image upload failed");
-                btn.innerText = "Save Changes";
-                btn.disabled = false;
-                return;
-            }
-        }
-
-        db.ref('users/' + currentUser.uid).update({
-            name: name,
-            whatsapp: wa,
-            photoUrl: photoUrl
-        }).then(() => {
-            alert("Profile Updated");
-            btn.innerText = "Save Changes";
-            btn.disabled = false;
-        });
-    }
-
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    // Standard Helpers
+    function nav(p, el) { document.querySelectorAll('.page').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active')); document.getElementById(p+'-page').classList.add('active'); el.classList.add('active'); }
+    function handleAuth() { if(currentUser) auth.signOut(); else document.getElementById('authModal').style.display='flex'; }
+    function checkLoginAndBuy() { if(!currentUser) { document.getElementById('productModal').style.display='none'; document.getElementById('authModal').style.display='flex'; } else { document.getElementById('b_amount').innerText=currentProduct.price; document.getElementById('upi-link').href=`upi://pay?pa=${UPI_ID}&pn=RikiStore&am=${currentProduct.price}&cu=INR`; document.getElementById('buyModal').style.display='flex'; } }
+    function login() { auth.signInWithEmailAndPassword(document.getElementById('l_email').value, document.getElementById('l_password').value).then(()=>{if(document.getElementById('l_email').value==="nitai.grp00@gmail.com")window.location.href="admin.html"; else closeModal('authModal');}).catch(e=>alert(e.message)); }
+    function signup() { auth.createUserWithEmailAndPassword(document.getElementById('s_email').value, document.getElementById('s_password').value).then(c=>{db.ref('users/'+c.user.uid).set({name:document.getElementById('s_name').value, email:c.user.email, whatsapp:"", photoUrl:"https://i.ibb.co/5c63G0d/profile-placeholder.png"}); closeModal('authModal');}).catch(e=>alert(e.message)); }
+    function loadProfile() { db.ref('users/'+currentUser.uid).on('value', s=>{const u=s.val(); document.getElementById('profile-content').innerHTML=`<div style="text-align:center;"><img src="${u.photoUrl}" style="width:80px;height:80px;border-radius:50%;margin-bottom:10px;"></div><label>Name</label><input id="p_name" value="${u.name}"><label>WhatsApp</label><input id="p_wa" value="${u.whatsapp}"><button class="btn-full" onclick="saveProfile()">Save</button>`}); }
+    function saveProfile() { db.ref('users/'+currentUser.uid).update({name:document.getElementById('p_name').value, whatsapp:document.getElementById('p_wa').value}).then(()=>alert("Saved")); }
+    function toggleAuthView() { document.getElementById('loginView').classList.toggle('hidden'); document.getElementById('signupView').classList.toggle('hidden'); }
+    function closeModal(id) { document.getElementById(id).style.display='none'; }
+    function closeFsModal() { document.getElementById('productModal').style.display='none'; }
 </script>
 </body>
-    </html>
+</html>
